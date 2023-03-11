@@ -17,19 +17,38 @@
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link href="assets/css/demo.css" rel="stylesheet" />
 </head>
-
 <body>
 <?php
         require('config/config.php');
         require('config/db.php');
         
+//define total number of results you want per page
+$result_per_page = 5;
+
+//find the total number of results/rows stored in database
+$query = "SELECT * FROM transaction";
+$result = mysqli_query($conn, $query);
+$number_of_result = mysqli_num_rows($result);
+
+//determine the total number of pages available
+$number_of_page = ceil($number_of_result / $result_per_page);
+
+//determine which page number visitor is currently on
+if(!isset($_GET['page'])){
+    $page = 1;
+}else{
+    $page = $_GET['page'];
+}
+
+//determine the sql LIMIT startinig number for the results on the display page
+$page_first_result = ($page-1) * $result_per_page;
 
 // Create Query
 $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, office.name as office_name, CONCAT(employee.lastname, ", ", employee.firstname) as fullname, transaction.remarks
 FROM transaction
 JOIN office ON transaction.office_id = office.id
 JOIN employee ON transaction.employee_id = employee.id
-ORDER BY transaction.id';
+ORDER BY transaction.id LIMIT '. $page_first_result .',' . $result_per_page . '';
 
 // Get the result
 $result = mysqli_query($conn, $query);
@@ -56,6 +75,11 @@ mysqli_close($conn);
                     <div class="col-md-12">
                             <div class="card strpied-tabled-with-hover">
                                 <div class="card-header ">
+                                <div class="addbutton" style="margin-bottom: 50px">
+                                <a href="add-transaction.php">
+                                <button type="submit" name="adds" class="btn btn-info btn-fill pull-right" >Add New Transaction</button>
+                                </a>        
+                            </div>
                                     <h4 class="card-title">Transactions</h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
                                 </div>
@@ -88,7 +112,11 @@ mysqli_close($conn);
                     </div>
                 </div>
             </div>
-                                    
+            <?php
+                        for($page=1; $page <= $number_of_page; $page++){
+                            echo '<a style="padding-left: 5px;" href = "transactions.php?page='. $page .'"> Page' . $page . '</a>';
+                        }
+                    ?>  
                         
 
                         <footer class="footer">

@@ -20,14 +20,38 @@
 
 <body>
 <?php
+error_reporting(0);
         require('config/config.php');
         require('config/db.php');
+
+//define total number of results you want per page
+$result_per_page = 5;
+
+//find the total number of results/rows stored in database
+$query = "SELECT * FROM employee";
+$result = mysqli_query($conn, $query);
+$number_of_result = mysqli_num_rows($result);
+
+//determine the total number of pages available
+$number_of_page = ceil($number_of_result / $result_per_page);
+
+//determine which page number visitor is currently on
+if(!isset($_GET['page'])){
+    $page = 1;
+}else{
+    $page = $_GET['page'];
+}
+
+//determine the sql LIMIT startinig number for the results on the display page
+$page_first_result = ($page-1) * $result_per_page;
+
 
 // Query
 $query = 'SELECT employee.lastname, employee.firstname, employee.address, office.name as office_name 
 FROM employee 
 JOIN office ON employee.office_id = office.id 
-ORDER BY employee.id ';
+ORDER BY employee.id LIMIT '. $page_first_result .',' . $result_per_page . '';
+
 
 // Get the result
 $result = mysqli_query($conn, $query);
@@ -40,6 +64,10 @@ mysqli_free_result($result);
 
 // Close the connection
 mysqli_close($conn);
+
+
+
+
 ?>
 
     <div class="wrapper">
@@ -54,6 +82,11 @@ mysqli_close($conn);
                     <div class="col-md-12">
                             <div class="card strpied-tabled-with-hover">
                                 <div class="card-header ">
+                                <div class="addbutton" style="margin-bottom: 50px">
+                                <a href="add-employee.php">
+                                <button type="submit" name="adds" class="btn btn-info btn-fill pull-right" >Add New Employee</button>
+                                </a>        
+                            </div>
                                     <h4 class="card-title">Employees</h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
                                 </div>
@@ -64,6 +97,7 @@ mysqli_close($conn);
                                             <th>First Name</th>
                                             <th>Address</th>
                                             <th>Office</th>
+                                            
                                         </thead>
                                         <tbody>
                                             <?php foreach($employees as $employee) : ?>
@@ -82,7 +116,11 @@ mysqli_close($conn);
                     </div>
                 </div>
             </div>
-                                    
+            <?php
+                        for($page=1; $page <= $number_of_page; $page++){
+                            echo '<a style="padding-left: 5px;" href = "employees.php?page='. $page .'"> Page' . $page . '</a>';
+                        }
+                    ?>     
                         
 
                         <footer class="footer">
