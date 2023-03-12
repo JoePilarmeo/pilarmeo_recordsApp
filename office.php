@@ -23,25 +23,20 @@
         require('config/config.php');
         require('config/db.php');
 
-//define total number of results you want per page
-$result_per_page = 5;
+$result_per_page = 10;
 
-//find the toal number of results/rows stored in database
 $query = "SELECT * FROM office";
 $result = mysqli_query($conn, $query);
 $number_of_result = mysqli_num_rows($result);
 
-//determine the total number of pages available
 $number_of_page = ceil($number_of_result / $result_per_page);
 
-//determine which page number visitor is currently on
 if(!isset($_GET['page'])){
     $page = 1;
 }else{
     $page = $_GET['page'];
 }
 
-//determine the sql LIMIT startinig number for the results on the display page
 $page_first_result = ($page-1) * $result_per_page;
 
 //  Query
@@ -106,11 +101,6 @@ mysqli_close($conn);
                                             <?php endforeach ?>
                                         </tbody>
                                     </table>
-
-
-                                    
-
-
                                 </div>
                             </div>
                         </div>
@@ -147,8 +137,6 @@ mysqli_close($conn);
                 </a>
             </li>
         <?php endif; ?>
-
-
 
         <?php for ($i = max(1, $page - 2); $i <= min($page + 2, $number_of_page); $i++): ?>
             <li>

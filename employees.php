@@ -20,38 +20,32 @@
 
 <body>
 <?php
-error_reporting(0);
+
         require('config/config.php');
         require('config/db.php');
 
-//define total number of results you want per page
-$result_per_page = 5;
 
-//find the total number of results/rows stored in database
+$result_per_page = 10;
+
 $query = "SELECT * FROM employee";
 $result = mysqli_query($conn, $query);
 $number_of_result = mysqli_num_rows($result);
 
-//determine the total number of pages available
 $number_of_page = ceil($number_of_result / $result_per_page);
 
-//determine which page number visitor is currently on
 if(!isset($_GET['page'])){
     $page = 1;
 }else{
     $page = $_GET['page'];
 }
 
-//determine the sql LIMIT startinig number for the results on the display page
 $page_first_result = ($page-1) * $result_per_page;
-
 
 // Query
 $query = 'SELECT employee.lastname, employee.firstname, employee.address, office.name as office_name 
 FROM employee 
 JOIN office ON employee.office_id = office.id 
 ORDER BY employee.id LIMIT '. $page_first_result .',' . $result_per_page . '';
-
 
 // Get the result
 $result = mysqli_query($conn, $query);
@@ -64,9 +58,6 @@ mysqli_free_result($result);
 
 // Close the connection
 mysqli_close($conn);
-
-
-
 
 ?>
 
@@ -145,9 +136,6 @@ mysqli_close($conn);
                 </a>
             </li>
         <?php endif; ?>
-
-
-
         <?php for ($i = max(1, $page - 2); $i <= min($page + 2, $number_of_page); $i++): ?>
             <li>
                 <a href="office.php?page=<?php echo $i; ?>">
@@ -155,8 +143,6 @@ mysqli_close($conn);
                 </a>
             </li>
         <?php endfor; ?>
-
-       
 
         <?php if ($page < $number_of_page): ?>
             <li>
@@ -177,7 +163,6 @@ mysqli_close($conn);
     </ul>
 </div>    
                         
-
                         <footer class="footer">
                 <div class="container-fluid">
                     <nav>
