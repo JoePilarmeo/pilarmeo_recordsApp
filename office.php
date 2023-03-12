@@ -106,18 +106,78 @@ mysqli_close($conn);
                                             <?php endforeach ?>
                                         </tbody>
                                     </table>
+
+
+                                    
+
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-                                    
-            <?php
-                        for($page=1; $page <= $number_of_page; $page++){
-                            echo '<a style="padding-left: 5px;" href = "office.php?page='. $page .'"> Page' . $page . '</a>';
-                        }
-                    ?>  
+                         
+            <style>
+    ul {
+      display: flex;
+      list-style: none;
+    }
+
+    li {
+      margin: 0 10px;
+    }
+</style>
+
+            <div class="table-paginate">
+
+    <ul>
+    <?php if ($page > 3): ?>
+            <li>
+                <a href="office.php?page=1">
+                    < First
+                </a>
+            </li>
+        <?php endif; ?>
+
+        <?php if ($page > 1): ?>
+            <li>
+                <a href="office.php?page=<?php echo $page - 1; ?>">
+                    < Previous
+                </a>
+            </li>
+        <?php endif; ?>
+
+
+
+        <?php for ($i = max(1, $page - 2); $i <= min($page + 2, $number_of_page); $i++): ?>
+            <li>
+                <a href="office.php?page=<?php echo $i; ?>">
+                    <?php echo $i; ?>
+                </a>
+            </li>
+        <?php endfor; ?>
+
+       
+
+        <?php if ($page < $number_of_page): ?>
+            <li>
+                <a href="office.php?page=<?php echo $page + 1; ?>">
+                    Next >
+                </a>
+            </li>
+        <?php endif; ?>
+
+        <?php if ($page < $number_of_page - 2): ?>
+            <li>
+                <a href="office.php?page=<?php echo $number_of_page; ?>">
+                    Last >
+                </a>
+            </li>
+        <?php endif; ?>
+
+    </ul>
+</div>
 
                         <footer class="footer">
                 <div class="container-fluid">
